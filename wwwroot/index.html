@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
+
+    <title>boost 搜索引擎</title>
+
+    <style>
+        /* 将内外边距清楚 html 的盒子模型*/
+        * {
+            margin: 0;  /* 设置外边距*/ 
+            padding: 0; /* 设置内边距*/ 
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+        /* 以. 开头 类选择器 */
+        .container {
+            width: 800px;      /* 设置宽度 */ 
+            margin: 0px auto;  /* 设置外边距 */
+            margin-top: 150x;  /* 设置上边距 */
+        }
+
+        /* 复合选择器 */
+        .container .search {
+            width: 100%; /* 宽度与父标签保持一致 */
+            height: 52px; 
+        }
+
+        /* 选中 input 标签 */
+        /* input 在设置高度的时候没有考虑到边框的问题  */
+        .container .search input {
+            float: left;
+            width: 600px;
+            height: 50px;
+            border: 1px solid black;
+            border-right: none;
+            padding-left: 10px;
+            color: #ccc;
+        }
+
+        .container .search button {
+            float: left;
+            width: 160px;
+            height: 52px;
+            background-color: #4e6ef2;
+            color: #fff;
+            font-size: 19px;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+
+        .container .result {
+            width: 100%;
+        }
+
+
+        .container .result .item {
+            margin-top: 15px;
+        }
+
+        .container .result .item a {
+            display: block;
+            text-decoration: none;
+            font-size: 20px;
+            color: #4e6ef2;
+        }
+
+        .container .result .item a:hover {
+            text-decoration: underline;
+        }
+
+        .container .result .item p {
+            margin-top: 5px;
+            display: block;
+            font-size: 16px;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+        }
+
+        .container .result .item i {
+            display: block;
+            font-style: normal;
+            color: green;
+        }
+
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <div class="search">
+            <input type="text" value="输入搜索关键字...">
+            <button onclick="Search()">搜索一下</button>
+        </div>
+
+        <div class="result">
+        </div>
+
+    </div>
+
+
+    <script>
+        function Search() {
+            // alert("hello js");
+            // $ 就是JQuery 的别称 
+            let query = $(".container .search input").val();
+
+            // ajax 属于一个和后端进行数据交互的函数 
+            $.ajax({
+                type: "GET",
+                url: "/s?word=" + query,
+                success: function(data) {
+                    console.log(data);
+                    BuildHtml(data);
+                }
+            });
+        }
+
+        function BuildHtml(data) {
+            if (data == null) return;
+
+            let result_label = $(".container .result ");
+            result_label.empty();
+            for (let elem of data) {
+                let a_label = $("<a>", {
+                    text: elem.title,
+                    href: elem.url,
+                    target: "_black"
+                });
+
+                let p_label = $("<p>", {
+                    text: elem.desc,
+                });
+
+                let i_label = $("<i>", {
+                    text: elem.url
+                });
+
+                let div_label = $("<div>", {
+                    class: "item" 
+                });
+
+                a_label.appendTo(div_label);
+                p_label.appendTo(div_label);
+                i_label.appendTo(div_label);
+                div_label.appendTo(result_label);
+            }
+        }
+    </script>
+
+</body>
+</html>
